@@ -1,20 +1,34 @@
 pipeline {
     agent { docker { image 'maven:3.3.3' } }
+
+    environment {
+        GLOBAL_VAR = 'true'
+    }
+
     stages {
 
         stage('Pre-Build') {
+
+            environment {
+                PREBUILD_VAR = 'YES'
+            }
+
             steps {
                 sh 'echo "Hello World"'
                 sh '''
                     echo "Multiline shell steps works too"
                     ls -lah
                 '''
+                //Both GLOBAL_VAR and PREBUILD_VAR are available
+                sh 'printenv'
             }
         }
 
         stage('Build') {
             steps {
                 sh 'mvn --version'
+                 //Only PREBUILD_VAR are available
+                sh 'printenv'
             }
         }
 
