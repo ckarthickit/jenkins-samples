@@ -30,11 +30,11 @@ pipeline {
             }
         }
 
-#         stage('Fake-Faile-Stage') {
-#            steps {
-#                sh 'echo "Fail!"; exit 1'
-#            }
-#        }
+//         stage('Fake-Faile-Stage') {
+//            steps {
+//                sh 'echo "Fail!"; exit 1'
+//            }
+//        }
     }
 
     post {
