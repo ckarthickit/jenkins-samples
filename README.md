@@ -17,6 +17,7 @@
 - Install Standard Recommended Plugins.
 - Maven Info Plugin.
 - Extended Choice Parameter - Useful for parameterizing the build.
+- [Git Parameter Plugin](https://wiki.jenkins.io/display/JENKINS/Git+Parameter+Plugin) - Adds ability to choose branches, tags or revisions from git repository.
   
 # Docker
 
