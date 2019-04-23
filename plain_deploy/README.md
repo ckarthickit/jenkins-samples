@@ -1,4 +1,4 @@
-# Repository that maintains the thrid-party libraries used by VSTB Video SDK
+# Repository that maintains the thrid-party libraries to be deployed to a maven repository
 
 ## Setting up a new Third Party Folder
 
