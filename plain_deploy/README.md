@@ -1,5 +1,10 @@
 # Repository that maintains the thrid-party libraries to be deployed to a maven repository
 
+## Creating a Gradle Poject 
+
+- First install gradle on your system
+- Run `gradle init` to intiailize a basic gradle project that has `gradle wrapper files`.
+
 ## Setting up a new Third Party Folder
 
 - Create a sub-folder under `artifacts` folder with appropriate name (corresponding to the specific third-party library).
