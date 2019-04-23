@@ -1,0 +1,48 @@
+def insideSecureBaseFolderName = "$rootDir/artifacts/insidesecure"
+def insideSecureArchive = file("$insideSecureBaseFolderName/ZNRE928-20101-001-drm-fusion-downloadable-agent-android-nexplayer-1.7.9-msoft.zip")
+task extractInsideSecureZip {
+    doLast {
+        if(insideSecureArchive.exists()) {
+            copy {
+                from {
+                    zipTree(insideSecureArchive).matching {
+                        // include('**/*.class')
+                        include('**/aar/drm-fusion-agent-*.aar')
+                    }
+                }
+                into new File(insideSecureBaseFolderName, "outputs")
+                eachFile { FileCopyDetails fcp ->
+                    println "####### Actual Relative Path: ${fcp.relativePath.pathString}"
+                    def relativePathStr = fcp.relativePath.pathString
+                    //prinln "relativePathStr: ${relativePathStr}"
+                    if (fcp.relativePath.isFile()) {
+                        fcp.relativePath = RelativePath.parse(true, fcp.name)
+                        println "####### Modified Relative Path: ${fcp.relativePath.pathString}"
+                    }
+                    project.ext.artifactsToPublish += [insideSecureBaseFolderName+ "/outputs/"+ fcp.name]
+                }
+                includeEmptyDirs = false
+            }
+        }else {
+            println "Copying from $projectDir/libs into $insideSecureBaseFolderName/outputs"
+            copy {
+                from file("$projectDir/libs")
+                into new File(insideSecureBaseFolderName, "outputs")
+            }
+        }
+    }
+}
+
+println "projectPath = $project.path"
+
+publishToMavenLocal {
+    dependsOn extractInsideSecureZip
+}
+
+publish {
+    dependsOn extractInsideSecureZip
+}
+
+task cleanArtifactsDir {
+    delete insideSecureBaseFolderName + "/outputs"
+}

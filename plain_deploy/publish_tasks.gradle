@@ -1,0 +1,28 @@
+
+apply plugin: 'maven-publish'
+
+publishing {
+    publications{
+        "${project.name}"(MavenPublication) {
+            groupId artifactGroup
+            artifactId artifactName
+            version artifactVersion
+            artifactsToPublish.each {
+                artifactFile ->
+                def classifier = (artifactFile.contains("debug"))?"debug": null
+                println "artifactFile = $artifactFile, classifer= $classifier"
+                artifact source: "$projectDir/outputs/$artifactFile", classifier: classifier
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            url "$nexusUrl/${project.hasProperty('isSnapshot') && isSnapshot.toBoolean() ? snapshotRepoPath : thirdPartyRepoPath}"
+            credentials {
+                username nexusUsername
+                password nexusPassword
+            }
+        }
+    }
+}

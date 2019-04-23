@@ -1,0 +1,54 @@
+pipeline {
+
+  agent {
+    label "ios"
+  }
+
+  //agent any
+
+  environment {
+    IS_SNAPSHOT = "${(branch != 'master')}"	
+  }
+
+  options {
+  	timestamps()
+  	disableConcurrentBuilds()
+  }
+  
+  stages {
+  	
+  	stage('Git Checkout') {
+  		steps {
+
+  			sh "echo '**Checking Out : ${branch}**'"
+
+  			checkout([$class                           : 'GitSCM',
+                    branches                         : [[name: "${branch}"]],
+                    doGenerateSubmoduleConfigurations: false,
+                    extensions                       : [[$class: 'CleanCheckout']],
+                    gitTool                          : 'Default',
+                    submoduleCfg                     : [],
+                    userRemoteConfigs                : [[credentialsId: 'ssh-user-name-with-private-key-cred',
+                                                         name         : 'origin',
+                                                         url          : 'ssh://git@bitbucket.sample.net:7999/proj/repo-libs.git']]
+          ])
+  		}
+  	}
+
+    stage('PublishToMavenLocal') {
+      steps{
+        sh "./gradlew publishToMavenLocal"
+      }
+    }
+  	//Publish the Build artifacts to specified Maven Repository
+    stage('Publish') {
+      environment {
+          NEXUS_CREDS = credentials('svc-jenkins-nexus-cicd')
+      }
+      steps {
+          sh "./gradlew publish -PisSnapshot=$IS_SNAPSHOT -PnexusUsername=$NEXUS_CREDS_USR -PnexusPassword=$NEXUS_CREDS_PSW"
+      }
+    }
+  }
+
+}

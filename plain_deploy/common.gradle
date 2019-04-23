@@ -1,0 +1,25 @@
+def isSnapshot = project.hasProperty('isSnapshot') && isSnapshot.toBoolean()
+println "isSnapshot Build = $isSnapshot"
+def artifactPropertyFile = file("$projectDir/artifact.properties")
+Properties props = new Properties()
+props.load(new FileReader(artifactPropertyFile))
+
+project.ext.artifactGroup = props.getProperty('artifactGroup')
+project.ext.artifactName = props.getProperty('artifactName')
+def artifactVersionFromProp = props.getProperty('artifactVersion')
+project.ext.artifactVersion = (!isSnapshot)? "$artifactVersionFromProp" : "$artifactVersionFromProp.${new Date().time}-SNAPSHOT"
+project.ext.artifactsToPublish = props.getProperty('artifactsToPublish').split(",")
+println "===================="
+println "<groupId>$artifactGroup</groupId>"
+println "<artifactId>$artifactName</artifactId>"
+println "<version>$artifactVersion</version>"
+println "===================="
+apply from : "$rootDir/publish_tasks.gradle"
+
+task clean(type: Delete) {
+    delete project.buildDir
+}
+
+
+
+
